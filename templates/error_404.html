@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h1 class="page-title">הדף לא נמצא (404)</h1>
+    <p class="meta-line">הקישור שביקשת לא קיים או הועבר.</p>
+    <div class="button-row">
+      <a href="{{ url_for('home') }}" class="btn-primary">← חזרה למסך הראשי</a>
+    </div>
+  </div>
+{% endblock %}

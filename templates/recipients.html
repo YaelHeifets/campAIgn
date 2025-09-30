@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h1 class="page-title">נמענים – {{ campaign.name }}</h1>
+
+    <p class="meta-line">
+      סה״כ נמענים שמורים: <strong>{{ count }}</strong>
+      {% if last_updated %} • עודכן: <strong>{{ last_updated }}</strong>{% endif %}
+    </p>
+
+    {% if count > 0 %}
+      <div style="margin:8px 0 16px;">
+        <strong>דוגמה (עד 10 ראשונים):</strong>
+        <pre class="mono-input" style="white-space:pre-wrap;background:#f7f7f8;border:1px solid #eee;border-radius:8px;padding:10px;margin:6px 0 0;">
+{{ "\n".join(sample) }}
+        </pre>
+      </div>
+    {% else %}
+      <div class="notice notice-warning">לא הועלו נמענים עדיין.</div>
+    {% endif %}
+
+    <h2 class="page-title" style="margin-top:8px;">העלאת רשימת נמענים</h2>
+    <form method="post" enctype="multipart/form-data" class="form-grid">
+      <label>
+        קובץ CSV (שורה לכל אימייל)
+        <input type="file" name="file" accept=".csv,text/csv">
+      </label>
+      <div style="text-align:center;">— או —</div>
+      <label>
+        הדבקה חופשית (מופרד בפסיקים/נקודה־פסיק/שורות)
+        <textarea name="emails_text" rows="8" placeholder="name@example.com, user2@domain.com; user3@site.org" class="mono-input"></textarea>
+      </label>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">שמור נמענים</button>
+        <a href="{{ url_for('campaign_details', campaign_id=campaign.id) }}" class="btn-secondary">← חזרה לפרטי קמפיין</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

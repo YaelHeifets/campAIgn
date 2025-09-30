@@ -1,0 +1,15 @@
+venv/
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.DS_Store
+
+# אל תדחפי קבצים בפועל מתיקיית data (ברנדר נשתמש בדיסק קבוע)
+data/*
+!data/.gitkeep
+!data/briefs/.gitkeep
+!data/content/.gitkeep
+!data/published/.gitkeep
+!data/recipients/.gitkeep

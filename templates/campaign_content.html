@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h1 class="page-title">תוכן לפי ערוץ – {{ campaign.name }}</h1>
+    <p class="meta-line">
+      קהל יעד: <strong>{{ campaign.audience }}</strong>
+      • מטרה: <strong>{{ campaign.goal or '—' }}</strong>
+    </p>
+
+    {# הודעות פלאש #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for category, message in messages %}
+            <li class="flash {{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {# סרגל פעולות: בחירת ערוץ + טון + יצירה/הורדה/ZIP/נמענים/פרסום/רעיונות #}
+    <form method="post"
+          action="{{ url_for('campaign_content', campaign_id=campaign.id) }}"
+          class="toolbar-safe"
+          id="content-toolbar"
+          style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 16px;">
+
+      <label class="block">
+        ערוץ:
+        <select name="channel" id="channel" class="input" required>
+          <option value="">אנא בחר/י</option>
+          <option value="Email"  {% if selected_channel=='Email'  %}selected{% endif %}>Email</option>
+          <option value="SMS"    {% if selected_channel=='SMS'    %}selected{% endif %}>SMS</option>
+          <option value="Social" {% if selected_channel=='Social' %}selected{% endif %}>Social</option>
+          <option value="Ads"    {% if selected_channel=='Ads'    %}selected{% endif %}>Ads</option>
+        </select>
+      </label>
+
+      <label class="block">
+        Tone:
+        <select name="tone" id="tone" class="input" required>
+          <option value="professional" {% if selected_tone=='professional' %}selected{% endif %}>מקצועי</option>
+          <option value="friendly"     {% if selected_tone=='friendly'     %}selected{% endif %}>ידידותי</option>
+          <option value="sharp"        {% if selected_tone=='sharp'        %}selected{% endif %}>חד</option>
+          <option value="humorous"     {% if selected_tone=='humorous'     %}selected{% endif %}>הומוריסטי</option>
+          <option value="formal"       {% if selected_tone=='formal'       %}selected{% endif %}>רשמי</option>
+        </select>
+      </label>
+
+      <button type="submit" name="action" value="generate" class="btn-primary" id="btn-generate" disabled>
+        צור/רענן תוכן
+      </button>
+
+      <button type="submit" name="action" value="ideas" class="btn-secondary" id="btn-ideas" disabled>
+        רעיונות
+      </button>
+
+      {% if content_txt %}
+        <a href="{{ url_for('download_content', campaign_id=campaign.id, channel=selected_channel) }}" class="btn-secondary">הורדה</a>
+      {% endif %}
+      <a href="{{ url_for('export_zip', campaign_id=campaign.id) }}" class="btn-secondary">יצוא ZIP</a>
+      <a href="{{ url_for('campaign_recipients', campaign_id=campaign.id) }}" class="btn-secondary">נמענים</a>
+    </form>
+
+  <script>
+    (function(){
+      const ch    = document.getElementById('channel');
+      const tone  = document.getElementById('tone');
+      const gen   = document.getElementById('btn-generate');
+      const ideas = document.getElementById('btn-ideas');
+      function refresh() {
+        const hasChannel = !!(ch && ch.value);
+        const hasTone    = !!(tone && tone.value);
+        if (gen)   gen.disabled   = !(hasChannel && hasTone);
+        if (ideas) ideas.disabled = !hasChannel;
+      }
+      if (ch)   ch.addEventListener('change', refresh);
+      if (tone) tone.addEventListener('change', refresh);
+      refresh();
+    })();
+  </script>
+
+    {# אזור רעיונות - מוצג אם נוצרו #}
+    {% if ideas %}
+      <div class="ideas-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:8px 0 16px;">
+        {% for idea in ideas %}
+          <div class="card" style="padding:12px;">
+            <pre class="mono-input" style="white-space:pre-wrap;margin:0 0 8px 0;">{{ idea }}</pre>
+            <button type="button" class="btn-primary small use-idea" data-idx="{{ loop.index0 }}">השתמשי ברעיון</button>
+          </div>
+        {% endfor %}
+      </div>
+
+      {# מזריקים את ה־JSON כטקסט כדי שהלינטר של VS Code לא יתבלבל #}
+      <script id="ideas-data" type="application/json">{{ ideas|tojson|safe }}</script>
+      <script>
+        (function(){
+          const dataEl = document.getElementById('ideas-data');
+          let IDEAS = [];
+          try {
+            IDEAS = JSON.parse((dataEl && dataEl.textContent) || '[]');
+          } catch(_) {
+            IDEAS = [];
+          }
+
+          document.addEventListener('click', function(e){
+            const btn = e.target.closest('.use-idea');
+            if (!btn) return;
+
+            const idx = Number(btn.dataset.idx);
+            const txt = IDEAS[idx];
+            if (!txt) return;
+
+            const ta = document.querySelector('textarea[name="content_text"]');
+            if (ta) {
+              ta.value = txt;
+              ta.scrollIntoView({behavior:'smooth', block:'center'});
+              ta.focus();
+            }
+          });
+        })();
+      </script>
+    {% endif %}
+
+    {# אזור עריכה/שמירה — מוצג אם יש תוכן *או* רעיונות #}
+    {% if content_txt or ideas %}
+      <form method="post"
+            action="{{ url_for('campaign_content', campaign_id=campaign.id) }}"
+            class="form-grid">
+        <input type="hidden" name="channel" value="{{ selected_channel }}">
+        <input type="hidden" name="tone" value="{{ selected_tone or 'professional' }}">
+        <textarea name="content_text" rows="14" class="mono-input">{{ content_txt or '' }}</textarea>
+        <div class="form-actions">
+          <button type="submit" name="action" value="save" class="btn-primary">שמור עריכה</button>
+          <a href="{{ url_for('home') }}" class="btn-secondary">← חזרה</a>
+        </div>
+      </form>
+    {% else %}
+      <div class="notice notice-warning">
+        עדיין אין תוכן לערוץ שנבחר. בחרי ערוץ וטון ולחצי “צור/רענן תוכן” או “רעיונות”.
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

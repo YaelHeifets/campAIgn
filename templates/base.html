@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ title or "CampAIgn" }}</title>
+    <!-- חשוב: נטען קודם main.css ואז style.css כדי ש-style.css יוכל לדרוס בעדינות -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}?v=2">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
+  </head>
+  <body>
+      <header class="app-header" role="banner">
+    <a class="skip-link" href="#main">דלגי לתוכן</a>
+
+    <!-- פס עליון: לוגו בצד ימין, כיתוב במרכז -->
+    <div class="container header-bar">
+      <!-- לוגו – קליק מחזיר לדף הבית -->
+      <a href="{{ url_for('home') }}" class="brand-logo-right" aria-label="דף הבית">
+        <img
+          src="{{ url_for('static', filename='images/campaignlogo.svg') }}"
+          class="logo-img"
+          alt="CampAIgn"
+          width="96" height="96"
+          decoding="async" loading="eager"
+        >
+      </a>
+
+      <!-- טקסט במרכז; LTR כדי שיהיה משמאל לימין -->
+      <div class="brand-center" dir="ltr">
+        <div class="brand-text">CampAIgn</div>
+        <div class="brand-tagline">POWERD BY AI. GUIDED BY YOU.</div>
+      </div>
+
+      <!-- עמודה שלישית ריקה לשמירת יישור (grid 1fr auto 1fr) -->
+      <div></div>
+    </div>
+
+    <!-- פס כפתורים מתחת, ממורכז -->
+    <nav class="subnav" aria-label="ניווט ראשי">
+      <div class="container subnav-inner">
+        <a href="{{ url_for('home') }}" class="link-quiet">דף הבית</a>
+        {% if current_user %}
+          <form method="post" action="{{ url_for('auth.logout') }}" style="display:inline;">
+            <button type="submit" class="btn-ghost small">התנתקות ({{ current_user.name }})</button>
+          </form>
+        {% else %}
+          <a href="{{ url_for('auth.login', next=request.path) }}" class="btn-secondary small">התחברות</a>
+        {% endif %}
+        <span class="mode-pill" title="מצב פרסום">{{ publish_mode }}</span>
+      </div>
+    </nav>
+  </header>
+
+    <main id="main">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h1 class="page-title">פרטי קמפיין – {{ campaign.name }}</h1>
+
+    <p class="meta-line">
+      קהל יעד: <strong>{{ campaign.audience }}</strong>
+      • ערוץ ברירת מחדל: <strong>{{ campaign.channel }}</strong>
+      • יעד: <strong>{{ campaign.goal or '—' }}</strong>
+      • תקציב: <strong>{{ campaign.budget or '—' }}</strong>
+    </p>
+    <p class="meta-line" style="margin-top:-8px;">
+      נוצר: <strong>{{ campaign.created_at[8:10] }}/{{ campaign.created_at[5:7] }}/{{ campaign.created_at[0:4] }} {{ campaign.created_at[11:16] }}</strong>
+      • עודכן לאחרונה:
+      <strong>{{ last_updated[8:10] }}/{{ last_updated[5:7] }}/{{ last_updated[0:4] }} {{ last_updated[11:16] }}</strong>
+    </p>
+
+    <div class="button-row" style="margin-bottom:12px;">
+      {% if current_user %}
+        <a class="btn-secondary" href="{{ url_for('edit_campaign', campaign_id=campaign.id) }}">עריכה</a>
+      {% endif %}
+      <a class="btn-secondary" href="{{ url_for('campaign_brief', campaign_id=campaign.id) }}">תקציר</a>
+      <a class="btn-secondary" href="{{ url_for('campaign_content', campaign_id=campaign.id) }}">תוכן</a>
+      <a class="btn-secondary" href="{{ url_for('campaign_results', campaign_id=campaign.id) }}">תוצאות</a>
+      <a class="btn-secondary" href="{{ url_for('campaign_recipients', campaign_id=campaign.id) }}">נמענים</a>
+      <a class="btn-primary" href="{{ url_for('export_zip', campaign_id=campaign.id) }}">הורדת ZIP</a>
+
+      {% if current_user %}
+        <form method="post" action="{{ url_for('generate_all', campaign_id=campaign.id) }}" style="display:inline;">
+          <button type="submit" class="btn-secondary">צור הכל</button>
+        </form>
+        <form method="post" action="{{ url_for('delete_campaign', campaign_id=campaign.id) }}" style="display:inline;"
+              onsubmit="return confirm('למחוק את הקמפיין &quot;{{ campaign.name }}&quot; וכל התוצרים שלו?');">
+          <button type="submit" class="btn-secondary">מחיקה</button>
+        </form>
+      {% endif %}
+      <a class="btn-secondary" href="{{ url_for('home') }}">← חזרה</a>
+    </div>
+
+    <h2 class="page-title" style="margin-top:4px;">סטטוס תוצרים</h2>
+
+    {% for f in files %}
+      <div style="border:1px solid #eee;border-radius:10px;padding:12px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+          <strong>{{ f.label }}</strong>
+          <div class="button-row">
+            {% if f.exists and f.download_url %}
+              <a href="{{ f.download_url }}" class="btn-secondary">הורדה</a>
+            {% endif %}
+
+            {% if f.kind == 'brief' %}
+              <a href="{{ url_for('campaign_brief', campaign_id=campaign.id) }}" class="btn-secondary">פתח/י</a>
+            {% else %}
+              <a href="{{ url_for('campaign_content', campaign_id=campaign.id, channel=f.channel) }}" class="btn-secondary">פתח/י</a>
+              {% if f.exists and current_user %}
+                <form method="post" action="{{ url_for('publish_content', campaign_id=campaign.id) }}" style="display:inline;">
+                  <input type="hidden" name="channel" value="{{ f.channel }}">
+                  <input type="hidden" name="tone" value="professional">
+                  <button type="submit" class="btn-secondary">פרסום במדיה</button>
+                </form>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+
+        {% if f.exists %}
+          <p style="margin:6px 0 8px;opacity:.85;">
+            עודכן: {{ f.mtime[8:10] }}/{{ f.mtime[5:7] }}/{{ f.mtime[0:4] }} {{ f.mtime[11:16] }}
+            • גודל: {{ f.size }}‎B
+          </p>
+          <pre class="mono-input" style="white-space:pre-wrap;background:#f7f7f8;border:1px solid #eee;border-radius:8px;padding:10px;margin:0;">
+{{ f.preview }}
+          </pre>
+        {% else %}
+          <div class="notice notice-warning" style="margin-top:6px;">
+            עדיין לא נוצר.
+            {% if current_user %}
+              {% if f.kind == 'brief' %}
+                <form method="post" action="{{ url_for('campaign_brief', campaign_id=campaign.id) }}" style="display:inline;margin-inline-start:8px;">
+                  <button type="submit" class="btn-primary">צור תקציר עכשיו</button>
+                </form>
+              {% else %}
+                <form method="post" action="{{ url_for('campaign_content', campaign_id=campaign.id) }}" style="display:inline;margin-inline-start:8px;">
+                  <input type="hidden" name="channel" value="{{ f.channel }}">
+                  <input type="hidden" name="tone" value="professional">
+                  <button type="submit" name="action" value="generate" class="btn-primary">צור תוכן עכשיו</button>
+                </form>
+              {% endif %}
+            {% else %}
+              <span style="margin-inline-start:8px;">יש להתחבר כדי ליצור תוצרים.</span>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

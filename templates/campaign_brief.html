@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h1 class="page-title">תקציר לקמפיין: {{ campaign.name }}</h1>
+    <p class="meta-line">
+      קהל יעד: <strong>{{ campaign.audience }}</strong> • ערוץ: <strong>{{ campaign.channel }}</strong> • מטרה: <strong>{{ campaign.goal or '—' }}</strong>
+    </p>
+
+    {# הודעות פלאש #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for category, message in messages %}
+            <li class="flash {{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {% if brief_text %}
+      <pre class="pre-box">{{ brief_text }}</pre>
+
+      <div class="brief-actions">
+        <a href="{{ url_for('download_brief', campaign_id=campaign.id) }}" class="btn-primary">הורדה</a>
+        <form method="post" action="{{ url_for('campaign_brief', campaign_id=campaign.id) }}">
+          <button type="submit" class="btn-secondary">רענן/צור מחדש</button>
+        </form>
+        <a href="{{ url_for('home') }}" class="btn-secondary">← חזרה</a>
+      </div>
+
+    {% else %}
+      <form method="post" action="{{ url_for('campaign_brief', campaign_id=campaign.id) }}" class="brief-actions">
+        <button type="submit" class="btn-primary">צור תקציר</button>
+        <a href="{{ url_for('home') }}" class="btn-secondary">← חזרה</a>
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}

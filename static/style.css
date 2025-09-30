@@ -1,0 +1,723 @@
+/* =======================
+   Design Tokens
+   ======================= */
+:root{
+  --bg: #f7f7f8;
+  --card: #ffffff;
+  --text: #101214;
+  --muted: #5f6b6d;
+
+  --primary: #0e7c66;
+  --primary-600: #0c6d5a;
+  --primary-100: rgba(14,124,102,.10);
+
+  --border: #e6e8eb;
+  --ring: rgba(14,124,102,.35);
+
+  --radius: 14px;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,.06);
+  --shadow-md: 0 2px 12px rgba(0,0,0,.10);
+}
+
+/* בסיס */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { background: var(--bg); color: var(--text); }
+a { color: inherit; }
+.container { max-width: 1060px; margin-inline: auto; padding-inline: 16px; }
+:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; border-radius: 6px; }
+.skip-link{
+  position:absolute; inset-inline-start: 12px; inset-block-start: -40px;
+  background:#000; color:#fff; padding:8px 10px; border-radius:10px;
+}
+.skip-link:focus{ inset-block-start: 12px; }
+
+/* =======================
+   Header
+   ======================= */
+.app-header { background: var(--card); box-shadow: var(--shadow-sm); }
+.header-bar{
+  display:grid; grid-template-columns: 1fr auto 1fr;
+  align-items:center; min-height: 120px; padding-block:16px 12px;
+}
+.brand-logo-right{
+  justify-self:start;
+  display:inline-flex; align-items:center; justify-content:center;
+  width: 96px; height: 96px; border-radius: 20px; text-decoration:none;
+  transition: transform .08s ease-in-out;
+}
+.brand-logo-right:hover{ transform: translateY(-1px) scale(1.01); }
+.logo-img{
+  width: 88px; height: 88px; display:block; border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.10), 0 0 0 6px var(--primary-100);
+}
+.brand-center{ justify-self:center; text-align:center; }
+.brand-text{ font-weight:800; font-size:1.9rem; letter-spacing:.3px; line-height:1.05; }
+.brand-tagline{ font-size:1.05rem; color:var(--muted); }
+
+.subnav{ background:var(--card); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.subnav-inner{ display:flex; align-items:center; justify-content:center; gap:14px; padding-block:10px; }
+.mode-pill{
+  font:inherit; color: var(--primary);
+  background: var(--primary-100);
+  border: 1px solid var(--border);
+  padding: 2px 8px; border-radius: 999px; line-height: 1.9;
+}
+
+/* =======================
+   Cards / Typography
+   ======================= */
+.card{
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); box-shadow:var(--shadow-md);
+  padding:18px;
+}
+.page-title{ margin:0 0 10px; font-size:1.5rem; }
+.meta-line{ margin:0 0 12px; color:var(--muted); }
+
+/* =======================
+   Buttons
+   ======================= */
+.btn-primary{
+  background: var(--primary); color:#fff; border:0;
+  padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer;
+  text-decoration:none; display:inline-block; transition:background .2s, box-shadow .2s;
+  box-shadow: 0 2px 0 rgba(0,0,0,.06);
+}
+.btn-primary:hover{ background: var(--primary-600); }
+.btn-primary.small{ padding:6px 10px; font-size:.95rem; }
+
+.btn-secondary, .btn-chip{
+  text-decoration:none; border:1px solid var(--border);
+  padding:6px 10px; border-radius:10px; background:#fff; display:inline-block;
+  font-weight:600; color:#333; transition: background .2s, border-color .2s;
+}
+.btn-secondary:hover, .btn-chip:hover{ background:#f7f7f7; border-color:#bbb; }
+.btn-ghost{
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border); padding: 8px 12px; border-radius:10px;
+  cursor: pointer; font-weight:600;
+}
+.btn-ghost.small{ padding:6px 10px; font-size:.95rem; }
+.btn-block{ width:100%; }
+
+/* =======================
+   Forms
+   ======================= */
+.input, input, select, textarea{
+  padding:10px; border:1px solid #ddd; border-radius:10px; font:inherit;
+}
+input:focus, select:focus, textarea:focus{ outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-100); }
+.form-grid{ display:grid; gap:12px; max-width:560px; width:100%; }
+.form-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+
+/* =======================
+   Home header + Search row
+   ======================= */
+.home-head{ display:flex; flex-direction:column; gap:12px; }
+.home-head-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.home-actions{ display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+
+.search-row{
+  display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center;
+  margin-top:6px;
+}
+
+/* =======================
+   Table (Campaigns)
+   ======================= */
+.table-wrapper{ overflow-x:auto; }
+.campaigns-table{ width:100%; border-collapse:collapse; table-layout:auto; }
+.campaigns-table th, .campaigns-table td{
+  padding:12px 14px; border-bottom:1px solid #f1f1f1; text-align:right;
+}
+.campaigns-table th{ font-weight:700; background:#f8faf9; }
+.campaigns-table tr:hover{ background:#fafafa; }
+
+.actions{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.col-created .created-wrap{ display:inline-flex; flex-direction:column; line-height:1.2; }
+.col-created .date{ white-space:nowrap; }
+.col-created .time{ white-space:nowrap; opacity:.8; font-size:.95em; }
+
+/* דסקטופ: חלוקת רוחב יציבה */
+@media (min-width: 1024px){
+  .campaigns-table{ table-layout: fixed; }
+  .campaigns-table .col-name    { width: 20%; }
+  .campaigns-table .col-audience{ width: 22%; }
+  .campaigns-table .col-channel { width: 10%; }
+  .campaigns-table .col-goal    { width: 18%; }
+  .campaigns-table .col-budget  { width: 8%;  }
+  .campaigns-table .col-created { width: 12%; }
+  .campaigns-table .actions     { width: 10%; }
+  .actions{ flex-wrap: nowrap; overflow: hidden; }
+}
+
+/* =======================
+   Notices & Flash
+   ======================= */
+.notice{ padding:12px; border-radius:10px; }
+.notice-warning{ background:#fff9e6; border:1px dashed #ffd36e; }
+
+.flash-messages{ list-style:none; padding:0; margin:0 0 10px 0; }
+.flash{ margin:6px 0; padding:10px; border-radius:10px; }
+.flash.success{ background: var(--primary-100); }
+.flash.error{ background: rgba(220,53,69,.08); }
+
+/* מובייל: כותרת ולוגו קצת קטנים יותר */
+@media (max-width: 600px){
+  .brand-logo-right{ width:84px; height:84px; }
+  .logo-img{ width:76px; height:76px; }
+  .brand-text{ font-size:1.6rem; }
+  .brand-tagline{ font-size:.95rem; }
+}
+/* === Header logo: no frame, slightly bigger === */
+.brand-logo-right{
+  width: 112px;   /* היה ~96px */
+  height: 112px;
+}
+
+.logo-img{
+  width: 104px;   /* היה ~88–96px */
+  height: 104px;
+  border-radius: 12px;
+  /* מסירים את ההילה (“מסגרת”) */
+  box-shadow: 0 8px 24px rgba(0,0,0,.10); /* נשאיר רק צל רך; מותר להסיר גם אותו אם תרצי */
+}
+
+/* מובייל – טיפה קטן יותר כדי לא להציף */
+@media (max-width: 600px){
+  .brand-logo-right{ width: 96px; height: 96px; }
+  .logo-img{ width: 88px; height: 88px; }
+}
+/* --- REMOVES ANY FRAME AROUND THE LOGO & GROWS IT A BIT --- */
+.brand-logo-right{
+  width: 120px;
+  height: 120px;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  outline: none !important;
+}
+
+.logo-img{
+  width: 300px;
+  height: 300px;
+  border: none !important;
+  box-shadow: none !important;  /* מסיר גם צל רך אם נשאר איפשהו */
+  background: transparent !important;
+  outline: none !important;
+}
+
+/* מובייל – מעט קטן יותר */
+@media (max-width: 600px){
+  .brand-logo-right{ width: 96px; height: 96px; }
+  .logo-img{ width: 96px; height: 96px; }
+}
+/* === Search row: bigger + right-aligned (RTL) === */
+.search-row{
+  width: 100%;
+  justify-content: flex-start;   /* ב-RTL זה “ימין” */
+  gap: 10px;
+}
+
+/* שדות גדולים ונוחים */
+.input-lg{ padding: 12px 14px; font-size: 1.05rem; }
+.search-row .input{ min-width: 320px; }           /* שדה טקסט רחב יותר */
+.search-row select.input{ min-width: 200px; }     /* רשימת הערוצים */
+
+.btn-lg{ padding: 12px 16px; font-size: 1.05rem; line-height: 1; }
+
+/* Dropdown פעולות קומפקטי שלא נדחק */
+.action-inline{ display:flex; align-items:center; gap:8px; }
+.action-select{ min-width: 180px; max-width: 100%; }
+
+/* === FIX: שלא נהפוך את תא "פעולות" ל-flex ולא נסתיר אותו === */
+.campaigns-table th.actions,
+.campaigns-table td.actions{
+  display: table-cell !important;
+  overflow: visible !important;
+  white-space: nowrap;
+  vertical-align: middle;
+  padding-inline: 12px;
+}
+
+/* התוכן הפנימי בלבד בפלקס */
+.action-inline{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-select{ min-width: 180px; max-width: 100%; }
+
+
+/* === Desktop widths (sum ≈ 100%) === */
+@media (min-width: 1024px){
+  .campaigns-table{ table-layout: fixed; }
+  .campaigns-table .col-name     { width: 18%; }
+  .campaigns-table .col-audience { width: 20%; }
+  .campaigns-table .col-channel  { width: 11%; }
+  .campaigns-table .col-goal     { width: 17%; }
+  .campaigns-table .actions      { width: 16%; } /* ↑ קצת יותר מקום */
+  .campaigns-table .col-budget   { width: 8%;  }
+  .campaigns-table .col-created  { width: 10%; }
+}
+
+/* --- Action button: green play --- */
+/* === Action button: round green with white arrow === */
+:root{
+  --brand-500:#0e7c66;
+  --brand-600:#0c6d5a;
+  --green-light:#1fd18a;   /* רך ובהיר */
+  --green-neon:#2aff88;    /* ניאון */
+}
+
+.action-go{
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;       /* עגול */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  cursor: pointer;
+  color: #fff;                 /* ה-SVG יורש → לבן */
+  transition: background .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+
+/* וריאציות צבע */
+.action-go--brand{ background: var(--brand-500); }
+.action-go--brand:hover{ background: var(--brand-600); }
+
+.action-go--light{ background: var(--green-light); }
+.action-go--light:hover{ filter: brightness(0.95); }
+
+.action-go--neon{ background: var(--green-neon); color:#08331f; } /* ניאון – לבן/כהה לפי טעם */
+.action-go--neon:hover{ filter: brightness(0.95); }
+
+.action-go:focus{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(14,124,102,.28);
+}
+.action-go:hover{ transform: translateY(-1px); }
+.action-go:active{ transform: translateY(0); }
+
+.action-go .icon-go{
+  width: 18px;   /* שנהי ל-16/20 לפי טעם */
+  height: 18px;
+  display: block;
+}
+/* קופסת טקסט לבריף */
+.pre-box{
+  white-space: pre-wrap;
+  word-break: break-word;
+  background:#f7f7f8;
+  border:1px solid #eee;
+  border-radius:10px;
+  padding:12px;
+  line-height:1.5;
+}
+
+/* שורת הכפתורים בבריף – אחידות גובה/רוחב */
+.brief-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-top:12px;
+}
+
+/* יישור גדלים – הורדה נשאר ירוק (primary), השאר secondary באותה מידה */
+.brief-actions .btn-primary,
+.brief-actions .btn-secondary{
+  height:40px;
+  padding:0 14px;        /* אותו מרווח לשני הסוגים */
+  border-radius:10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+}
+
+/* יישור ספציפי כי btn-secondary הוגדר קטן יותר קודם */
+.brief-actions .btn-secondary{
+  border:1px solid #ddd;
+  background:#fff;
+  color:#333;
+}
+/* סרגלים ופעולות במסך תוכן */
+.content-actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;   /* בחירות משמאל/ימין + פרסום בולט */
+  margin:12px 0 16px;
+}
+
+.content-toolbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+/* יישור גובה/רוחב כפתורים – רק פרסום ירוק (primary) */
+.content-toolbar .btn-primary,
+.content-toolbar .btn-secondary{
+  height:40px;
+  padding:0 14px;
+  border-radius:10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+}
+/* סרגל עליון במסך תוכן */
+.content-actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.content-toolbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+/* שימי את "פרסום" בקצה (ב-RTL הקצה הוא שמאל) */
+.publish-form{
+  margin-inline-start:auto; /* דוחף את הטופס לקצה הנגדי */
+}
+
+/* אחידות גובה/רוחב לכפתורים */
+.content-toolbar .btn-secondary,
+.publish-form .btn-primary{
+  height:40px;
+  padding:0 14px;
+  border-radius:10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+}
+/* סרגל עליון – כל הכפתורים יחד */
+.content-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-start;   /* לא לדחוף שמאלה */
+}
+
+/* ביטול הדחיפה של טופס הפרסום לקצה */
+.publish-form{
+  margin-inline-start: 0 !important;
+}
+/* אחידות גובה/רוחב בכפתורי אזור העריכה */
+.form-actions .btn-primary,
+.form-actions .btn-secondary{
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+/* כפתורים מנוטרלים – מראה אפור ובלתי-לחיץ */
+button[disabled], .btn-secondary[disabled], .btn-primary[disabled]{
+  opacity: .55;
+  cursor: not-allowed;
+}
+.ideas-box{
+  margin-top:12px;
+  background:#f7fff9;
+  border:1px solid #bfe8d5;
+  border-radius:10px;
+  padding:12px;
+}
+.ideas-box h3{
+  margin:0 0 8px;
+  font-size:1rem;
+  color:#0e7c66;
+}
+.ideas-box ol{
+  margin:0;
+  padding-inline-start:1.2em;
+}
+.ideas-box li{ margin: .25em 0; }
+
+.ideas-list{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ideas-list li{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px dashed #e9f3ef;
+}
+.ideas-list li:last-child{ border-bottom: none; }
+.idea-text{ flex: 1 1 auto; }
+.idea-actions{ flex: 0 0 auto; display: flex; gap: 6px; }
+.btn-chip.copied{ background: #e7fff2; border-color: #bfe8d5; }
+
+/* ——— Ideas: friendly look ——— */
+.ideas-box.friendly{
+  margin-top:12px;
+  background: linear-gradient(0deg,#f7fff9, #fafffd);
+  border:1px solid #cfe4db;
+  border-radius:14px;
+  padding:14px;
+}
+.ideas-head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:8px;
+}
+.ideas-head h3{ margin:0; font-size:1rem; color:#0e7c66; }
+
+.btn-sm{ height:32px; padding:0 10px; border-radius:10px; font-weight:600; }
+
+.ideas-list{ list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+.idea-item{
+  display:flex; align-items:center; gap:10px;
+  background:#fff; border:1px solid #e8f2ee; border-radius:10px; padding:10px 12px;
+  transition: box-shadow .15s ease, transform .05s ease;
+}
+.idea-item:hover{ box-shadow:0 1px 8px rgba(14,124,102,.10); }
+.idea-text{ flex:1 1 auto; }
+.idea-actions{ display:flex; gap:6px; }
+
+.btn-chip{
+  padding:6px 10px; font-weight:600; border:1px solid #d7e9e2; border-radius:10px; background:#fff;
+}
+.btn-chip:hover{ background:#f1fbf7; border-color:#c5e1d7; }
+.btn-chip.copied{ background:#e8fff3; border-color:#bfe8d5; }
+
+.icon-14{ width:14px; height:14px; margin-inline-start:4px; }
+
+/* ===== Editor Card ===== */
+.editor-card{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  background:#fff;
+  border:1px solid #e8f2ee;
+  border-radius:14px;
+  padding:12px;
+  box-shadow:0 1px 10px rgba(14,124,102,.06);
+}
+
+.editor-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.editor-title{ font-weight:700; font-size:1.05rem; }
+.editor-meta{ display:flex; align-items:center; gap:6px; color:#0e7c66; }
+.editor-meta .badge{
+  background:#f0fff7;
+  border:1px solid #cfe4db;
+  border-radius:9999px;
+  padding:4px 8px;
+  font-size:.85rem;
+}
+.editor-meta .dot{ opacity:.5; }
+
+.editor-body{ display:block; }
+.editor-textarea{
+  width:100%;
+  min-height:320px;
+  resize:vertical;
+  padding:12px;
+  border:1px solid #dde7e3;
+  border-radius:12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  line-height:1.5;
+  background:#fcfffe;
+}
+.editor-textarea:focus{
+  outline:none;
+  border-color:#0e7c66;
+  box-shadow:0 0 0 3px rgba(14,124,102,.18);
+}
+
+.editor-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  justify-content:flex-start;
+}
+/* ===== Results toolbar buttons ===== */
+.results-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-start;
+  margin:0; /* העיטוף כבר מספק ריווח */
+}
+
+.results-actions .btn-primary,
+.results-actions .btn-secondary,
+.results-actions form > button{
+  height: 40px;
+  min-width: 140px;
+  padding: 0 14px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.results-actions form.inline{
+  display:inline;
+}
+/* ===== KPI strip (Results) ===== */
+.kpi-row{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap:10px;
+  margin:8px 0 16px;
+}
+.kpi{
+  background:#fff;
+  border:1px solid #e8f2ee;
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+  box-shadow:0 1px 8px rgba(14,124,102,.06);
+}
+.kpi-label{
+  font-size:.85rem;
+  opacity:.75;
+  margin-bottom:4px;
+}
+.kpi-value{
+  font-size:1.25rem;
+  font-weight:800;
+  color:#0e7c66;
+}
+/* ===== Edit form polish ===== */
+.form-note { margin: 0 0 4px; color:#666; font-size:.9rem; }
+.req { color:#d33; margin-inline-start:4px; }
+
+.form-edit.grid-2 { grid-template-columns: 1fr; }
+.span-2 { grid-column: 1 / -1; }
+
+@media (min-width: 900px) {
+  .form-edit.grid-2 { grid-template-columns: 1fr 1fr; }
+}
+
+/* טיפים קטנים מתחת לשדות */
+.hint { display:block; margin-top:4px; color:#666; font-size:.85rem; }
+
+.modal-backdrop{
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.35);
+  display: grid; place-items: center;
+  z-index: 1000;
+}
+.modal{
+  background:#fff; border-radius:14px; padding:16px;
+  width: min(520px, calc(100% - 32px));
+  box-shadow: 0 10px 30px rgba(0,0,0,.15);
+}
+.modal-title{ margin:0 0 8px; font-size:1.2rem; }
+.modal-text{ margin:0 0 12px; }
+.modal-actions{ display:flex; gap:8px; justify-content:flex-end; }
+
+.btn-danger{
+  background:#ffffff;
+  color:#c62828;
+  border:1px solid #e2b9b9;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.btn-danger:hover{ background:#fff3f3; border-color:#d89c9c; }
+
+/* === Action controls (דרופדאון + כפתור Play) === */
+.action-inline{display:flex;gap:8px;align-items:center;white-space:nowrap}
+.action-select{min-width:170px;max-width:100%}
+
+/* כפתור ההפעלה */
+.action-go{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:36px;height:36px;
+  border:1px solid #0e7c66;border-radius:10px;
+  background:#e9f6f2;color:#0e7c66;cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease, background .12s ease
+}
+.action-go:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(14,124,102,.25);background:#def2ec}
+.action-go:active{transform:translateY(0);box-shadow:none}
+.action-go:focus{outline:none;box-shadow:0 0 0 3px rgba(14,124,102,.35)}
+.icon-go{width:18px;height:18px;pointer-events:none}
+
+/* העמודה לא “נעלמת” בדסקטופ */
+@media (min-width:1024px){
+  .campaigns-table{table-layout:fixed}
+  .campaigns-table .actions{width:16%}
+  .campaigns-table .col-budget{width:10%}
+  .campaigns-table .col-created{width:12%}
+}
+
+/* הבטחה ש-[hidden] באמת מסתיר (אם עדיין לא קיים) */
+[hidden]{display:none!important}
+
+/* ===== יישור גודל אחיד לכפתורי הסרגל בתוכן ===== */
+#content-actions .btn-primary,
+#content-actions .btn-secondary,
+#content-actions a.btn-primary,
+#content-actions a.btn-secondary,
+#content-actions button.btn-primary,
+#content-actions button.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;            /* גובה אחיד */
+  padding: 0 14px;         /* רוחב אחיד */
+  font-size: 0.95rem;
+  line-height: 1;          /* מונע “עודף” אנכי */
+  vertical-align: middle;
+}
+
+/* שדות בחירה בסרגל – באותו גובה כמו הכפתורים */
+#content-actions .input,
+#content-actions select.input {
+  height: 40px;
+  padding: 0 10px;
+  line-height: 1;
+}
+
+/* תווית+שדה בשורה מהודקת */
+#content-actions label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* מונע ירידת שורה, עם גלילה עדינה אם צפוף */
+#content-actions {
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  gap: 8px;
+}
+
+/* אופציונלי: הכפתור "רעיונות" יקבל אותו משקל כמו הכפתורים האחרים */
+#content-actions .btn-secondary {
+  border: 1px solid #ddd;  /* ודא שיש מסגרת */
+}
+

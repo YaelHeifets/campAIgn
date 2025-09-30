@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h1 class="page-title">אופס… קרתה שגיאה (500)</h1>
+    <p class="meta-line">המערכת נתקלה בשגיאה בלתי צפויה. נסו לרענן או לחזור מאוחר יותר.</p>
+    <div class="button-row">
+      <a href="{{ url_for('home') }}" class="btn-primary">← חזרה למסך הראשי</a>
+    </div>
+  </div>
+{% endblock %}

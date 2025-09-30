@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <!-- ראש עמוד -->
+  <div class="card home-head">
+    <div class="home-head-row">
+      <h1 class="page-title">קמפיינים</h1>
+
+      <div class="home-actions">
+        <a href="{{ url_for('new_campaign') }}" class="btn-primary">+ קמפיין חדש</a>
+        <form method="post" action="{{ url_for('demo_mode') }}">
+          <button type="submit" class="btn-secondary btn-block">מצב דמו</button>
+        </form>
+      </div>
+    </div>
+
+    {# הודעות פלאש #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for category, message in messages %}
+            <li class="flash {{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <!-- שורת חיפוש – מוגדלת ומיושרת לימין -->
+    <form method="get" action="{{ url_for('home') }}" class="search-row">
+      <input
+        type="text"
+        name="q"
+        value="{{ q }}"
+        class="input input-lg"
+        placeholder="חיפוש בשם / קהל יעד / מטרה"
+        autocomplete="off">
+      <select name="channel" class="input input-lg">
+        <option value="">כל הערוצים</option>
+        {% for opt in channels %}
+          <option value="{{ opt }}" {% if ch == opt %}selected{% endif %}>{{ opt }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn-secondary btn-lg">חיפוש</button>
+      {% if q or ch %}
+        <a href="{{ url_for('home') }}" class="btn-secondary btn-lg">נקה</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- טבלת קמפיינים -->
+  <div class="card" style="margin-top:12px;">
+    {% if campaigns and campaigns|length > 0 %}
+      <div class="table-wrapper">
+        <table class="campaigns-table">
+          <thead>
+            <tr>
+              <th class="col-name">שם הקמפיין</th>
+              <th class="col-audience">קהל יעד</th>
+              <th class="col-channel">ערוץ פרסום</th>
+              <th class="col-goal">מטרה</th>
+              <th class="actions">פעולות</th>
+              <th class="col-budget">תקציב</th>
+              <th class="col-created">עודכן לאחרונה</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in campaigns %}
+            <tr>
+              <td class="col-name">
+                <a href="{{ url_for('campaign_results', campaign_id=c.id) }}"
+                   class="btn-chip" style="text-decoration:none;">
+                  {{ c.name }}
+                </a>
+              </td>
+
+              <td class="col-audience">{{ c.audience }}</td>
+              <td class="col-channel">{{ c.channel }}</td>
+              <td class="col-goal">{{ c.goal }}</td>
+
+              <td class="actions">
+                <div class="action-inline">
+                  <select class="input action-select" id="act-{{ c.id }}" aria-label="בחרי פעולה לקמפיין {{ c.name }}">
+                    <option value="">בחרי פעולה…</option>
+
+                    <!-- צפייה (GET) -->
+                    <option value="brief">תקציר</option>
+                    <option value="content">תוכן</option>
+                    <option value="results">תוצאות</option>
+                    {# <option value="details">פרטים</option> #}
+
+                    {% if current_user %}
+                      <option value="edit">עריכה</option>
+                      {# <option value="generate_all">צור הכל</option> #}
+                      <option value="delete">מחיקה</option>
+                    {% endif %}
+                  </select>
+
+                  <!-- כפתור הפעלה (Play) – משולש ירוק, בלי עיגול -->
+                  <button type="button"
+                          class="action-go"
+                          data-id="{{ c.id }}"
+                          title="בצעי פעולה"
+                          aria-label="בצעי פעולה"
+                          style="color:#0e7c66;">
+                    <svg class="icon-go" xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                      <polygon points="8,5 19,12 8,19" fill="currentColor"/>
+                    </svg>
+                  </button>
+                </div>
+
+                {% if current_user %}
+                  <!-- טופס מחיקה חבוי ל-POST (המודאל יאשר לפני שליחה) -->
+                  <form method="post"
+                        action="{{ url_for('delete_campaign', campaign_id=c.id) }}"
+                        id="del-{{ c.id }}"
+                        hidden></form>
+                {% endif %}
+              </td>
+
+              <td class="col-budget">{{ c.budget }}</td>
+
+              <td class="col-created">
+                <span class="created-wrap">
+                  <span class="date">{{ c.last_updated[8:10] }}/{{ c.last_updated[5:7] }}/{{ c.last_updated[0:4] }}</span>
+                  <span class="time">{{ c.last_updated[11:16] }}</span>
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <p class="meta-line" style="margin:8px 0 0;">
+        סה״כ קמפיינים: <strong>{{ campaigns|length }}</strong>
+        • עודכן לאחרונה:
+        <strong>
+          {{ campaigns[0].last_updated[8:10] }}/{{ campaigns[0].last_updated[5:7] }}/{{ campaigns[0].last_updated[0:4] }}
+          {{ campaigns[0].last_updated[11:16] }}
+        </strong>
+      </p>
+
+    {% else %}
+      <div class="notice notice-warning">
+        עדיין אין קמפיינים. לחצי על “קמפיין חדש” כדי ליצור ראשון.
+      </div>
+    {% endif %}
+  </div>
+
+  {% if current_user %}
+  <!-- מודאל אישור מחיקה (בודד, מחוץ ללולאה ולכל טופס) -->
+  <div id="confirm-modal" class="modal-backdrop" hidden>
+    <div class="modal">
+      <h3 class="modal-title">לתשומת ליבך!</h3>
+      <p class="modal-text">
+        הפעולה הבאה תמחק את הקמפיין
+        <strong id="del-camp-name"></strong>
+        מן הממשק. לא ניתן יהיה לשחזרו מתוך המערכת (הנתונים נשמרים ב־DB).
+        האם לאשר?
+      </p>
+      <div class="modal-actions">
+        <!-- ביטול מודגש (ירוק) -->
+        <button type="button" class="btn-primary" id="btn-cancel">ביטול</button>
+        <!-- אישור מחיקה רגוע (אדום) -->
+        <button type="button" class="btn-danger"  id="btn-confirm">אישור מחיקה</button>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- סקריפט פעולות -->
+  <script>
+    // ניווטי GET
+    const actionUrl = {
+      brief:   (id) => `/campaign/${id}/brief`,
+      content: (id) => `/campaign/${id}/content`,
+      results: (id) => `/campaign/${id}/results`,
+      edit:    (id) => `/campaign/${id}/edit`,
+    };
+
+    (function () {
+      const modal   = document.getElementById('confirm-modal');
+      const nameEl  = document.getElementById('del-camp-name');
+      let currentId = null;
+
+      // דלגציה אחת לכל הלחיצות הרלוונטיות
+      document.addEventListener('click', (e) => {
+        // 1) כפתור PLAY: להריץ פעולה לפי הבחירה בדרופדאון
+        const playBtn = e.target.closest('.action-go');
+        if (playBtn) {
+          const id  = playBtn.dataset.id;
+          const sel = document.getElementById('act-' + id);
+          const v   = sel && sel.value;
+          if (!v) return;
+
+          // GET
+          if (actionUrl[v]) {
+            location.href = actionUrl[v](id);
+            return;
+          }
+          // DELETE -> לפתוח מודאל (לא שולחים טופס עדיין)
+          if (v === 'delete') {
+            currentId = id;
+            const row      = playBtn.closest('tr');
+            const nameLink = row && row.querySelector('.col-name a');
+            if (nameEl && nameLink) nameEl.textContent = nameLink.textContent.trim();
+            if (modal) modal.hidden = false;
+            return;
+          }
+        }
+
+        // 2) כפתור "ביטול" במודאל
+        if (e.target.closest('#btn-cancel')) {
+          if (modal) modal.hidden = true;
+          currentId = null;
+          return;
+        }
+
+        // 3) כפתור "אישור מחיקה" במודאל
+        if (e.target.closest('#btn-confirm')) {
+          if (!currentId) return;
+          const form = document.getElementById('del-' + currentId);
+          if (form) {
+            // מסמנים שאושר, ואז מגישים. submit() לא יפעיל שוב מאזין submit
+            form.dataset.confirmed = '1';
+            form.submit();
+          }
+          if (modal) modal.hidden = true;
+          currentId = null;
+          return;
+        }
+
+        // 4) סגירה בלחיצה על רקע המודאל
+        if (modal && !modal.hidden && e.target === modal) {
+          modal.hidden = true;
+          currentId = null;
+          return;
+        }
+      });
+
+      // בלם הגשות טפסי מחיקה "ישנים" (אם משהו יבוא לעקוף)
+      document.addEventListener('submit', (e) => {
+        const form = e.target;
+        if (!(form instanceof HTMLFormElement)) return;
+        if (!form.id || !form.id.startsWith('del-')) return;
+        if (form.dataset.confirmed === '1') return; // כבר אושר
+
+        // עוצרים, שואלים במודאל
+        e.preventDefault();
+        currentId = form.id.replace('del-', '');
+        const rowPlay = document.querySelector(`.action-go[data-id="${currentId}"]`);
+        const row     = rowPlay && rowPlay.closest('tr');
+        const nameLink = row && row.querySelector('.col-name a');
+        if (nameEl && nameLink) nameEl.textContent = nameLink.textContent.trim();
+        if (modal) modal.hidden = false;
+      }, true);
+    })();
+  </script>
+
+{% endblock %}

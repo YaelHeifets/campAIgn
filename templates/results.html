@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h1 class="page-title">תוצאות – {{ campaign.name }}</h1>
+    <p class="meta-line">
+      קהל יעד: <strong>{{ campaign.audience }}</strong>
+      • ערוץ ברירת מחדל: <strong>{{ campaign.channel }}</strong>
+      • יעד: <strong>{{ campaign.goal or '—' }}</strong>
+    </p>
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">תוצרים מוכנים</div>
+        <div class="kpi-value">{{ summary.assets_exist }}/{{ summary.total_assets }}</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">בריף</div>
+        <div class="kpi-value">{{ '✓' if summary.brief_exists else '—' }}</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">פרסומים שנשלחו</div>
+        <div class="kpi-value">{{ summary.sent_count }}</div>
+      </div>
+    </div>
+
+    <div class="button-row" style="margin-bottom:12px;">
+      <a class="btn-secondary" href="{{ url_for('campaign_brief', campaign_id=campaign.id) }}">לבריף</a>
+      <a class="btn-secondary" href="{{ url_for('campaign_content', campaign_id=campaign.id) }}">לתוכן</a>
+      <a class="btn-primary"   href="{{ url_for('export_zip', campaign_id=campaign.id) }}">הורדת ZIP</a>
+      <a class="btn-secondary" href="{{ url_for('home') }}">← חזרה</a>
+    </div>
+
+    {% for f in files %}
+      <div class="file-card" style="border:1px solid #eee;border-radius:10px;padding:12px;margin-bottom:12px;">
+        <div class="file-head" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+          <strong>{{ f.label }}</strong>
+
+          <div class="results-actions">
+            {# הורדה #}
+            {% if f.exists and f.download_url %}
+              <a href="{{ f.download_url }}" class="btn-secondary">הורדה</a>
+            {% else %}
+              <span class="btn-secondary" style="opacity:.55;cursor:not-allowed;" aria-disabled="true">הורדה</span>
+            {% endif %}
+
+            {# פתיחה #}
+            {% if f.kind == 'brief' %}
+              <a href="{{ url_for('campaign_brief', campaign_id=campaign.id) }}" class="btn-secondary">פתח/י</a>
+            {% else %}
+              <a href="{{ url_for('campaign_content', campaign_id=campaign.id, channel=f.channel) }}" class="btn-secondary">פתח/י</a>
+            {% endif %}
+
+            {# פרסום במדיה — בולט בירוק; רק אם יש תוכן קיים #}
+            {% if current_user and f.kind != 'brief' %}
+              {% if f.exists %}
+                <form method="post" action="{{ url_for('publish_content', campaign_id=campaign.id) }}" class="inline">
+                  <input type="hidden" name="channel" value="{{ f.channel }}">
+                  <input type="hidden" name="tone" value="professional">
+                  <button type="submit" class="btn-primary">פרסום במדיה</button>
+                </form>
+              {% else %}
+                <button type="button" class="btn-primary" disabled title="אין מה לפרסם עדיין">פרסום במדיה</button>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+
+        {% if f.exists %}
+          <p class="meta-line" style="margin:6px 0 8px;opacity:.85;">
+            עודכן: {{ f.mtime[8:10] }}/{{ f.mtime[5:7] }}/{{ f.mtime[0:4] }} {{ f.mtime[11:16] }}
+            • גודל: {{ f.size }}‎B
+          </p>
+          <pre class="mono-input" style="white-space:pre-wrap;background:#f7f7f8;border:1px solid #eee;border-radius:8px;padding:10px;margin:0;">
+{{ f.preview }}
+          </pre>
+        {% else %}
+          <div class="notice notice-warning" style="margin-top:6px;">
+            עדיין לא נוצר.
+            {% if f.kind == 'brief' %}
+              לחצי “לבריף” ואז “צור/רענן בריף”.
+            {% else %}
+              לחצי “לתוכן”, בחרי ערוץ ו־Tone, ואז “צור/רענן תוכן”.
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

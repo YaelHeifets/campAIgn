@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h1 style="margin:0 0 12px;">קמפיין חדש</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <style>
+          .message-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 10px 0;
+          }
+          .message-item {
+            margin: 6px 0;
+            padding: 10px;
+            border-radius: 10px;
+          }
+          .message-success {
+            background: rgba(14,124,102,.1);
+          }
+          .message-error {
+            background: rgba(220,53,69,.08);
+          }
+        </style>
+        <ul class="message-list">
+          {% for category, message in messages %}
+            <li class="message-item {{ 'message-success' if category=='success' else 'message-error' }}">
+              {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" action="{{ url_for('new_campaign') }}" class="form-grid">
+      <label>
+        שם קמפיין *
+        <input name="name" required
+               value="{{ (form.name if form is defined) or '' }}"
+               autocomplete="off">
+      </label>
+
+      <label>
+        קהל יעד *
+        <input name="audience" required
+               placeholder="למשל: לקוחות קיימים / לידים קרים"
+               value="{{ (form.audience if form is defined) or '' }}"
+               autocomplete="off">
+      </label>
+
+      <label>
+        ערוץ שיווקי *
+        <select name="channel" required>
+          <option value="">בחרי…</option>
+          {% for opt in ['Email','SMS','Social','Ads'] %}
+            <option value="{{ opt }}" {% if form is defined and form.channel == opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>
+        מטרה (Goal)
+        <input name="goal"
+               placeholder="למשל: הרשמות לניוזלטר / הרשמה לוובינר"
+               value="{{ (form.goal if form is defined) or '' }}"
+               autocomplete="off">
+      </label>
+
+      <label>
+        תיאור העסק (מה אתן עושות?)
+        <textarea name="business_desc" rows="3" placeholder="לדוגמה: סטודיו לבניית ציפורניים; חוגי יצירה בפימו; סדנאות קישוט עוגות בנטו" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;"></textarea>
+      </label>
+
+      <label>
+        תקציב (₪)
+        <input type="number" name="budget" min="0" step="0.01" inputmode="decimal"
+               placeholder="למשל: 1500"
+               value="{{ (form.budget if form is defined) or '' }}">
+      </label>
+
+      <label>
+        כתובת אתר / דף נחיתה
+        <input name="landing_url" placeholder="https://example.com/offer"
+              style="width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;">
+      </label>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">שמור</button>
+        <a href="{{ url_for('home') }}" class="btn-secondary">ביטול</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

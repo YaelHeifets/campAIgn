@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h1 class="page-title">התחברות / הרשמה</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for category, message in messages %}
+            <li class="flash {{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" class="form-grid" style="max-width:420px;">
+      <input type="hidden" name="next" value="{{ next or '' }}">
+      <label>
+        שם מלא *
+        <input type="text" name="name" required autocomplete="name" placeholder="למשל: Yael Heifets">
+      </label>
+      <label>
+        אימייל *
+        <input type="email" name="email" required autocomplete="email" placeholder="name@example.com">
+      </label>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">כניסה</button>
+        <a href="{{ url_for('home') }}" class="btn-secondary">ביטול</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

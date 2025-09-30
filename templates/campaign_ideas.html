@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h1 class="page-title">רעיונות לפי ערוץ – {{ campaign.name }}</h1>
+    <p class="meta-line">
+      קהל יעד: <strong>{{ campaign.audience }}</strong>
+      • סוג עסק: <strong>{{ campaign.business_desc or '—' }}</strong>
+      • מטרה: <strong>{{ campaign.goal or '—' }}</strong>
+    </p>
+
+    {# סרגל בחירה #}
+    <form method="get" action="{{ url_for('campaign_ideas', campaign_id=campaign.id) }}" class="toolbar-safe" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 16px;">
+      <label class="block">
+        ערוץ:
+        <select name="channel" class="input">
+          {% for opt in ['Email','SMS','Social','Ads'] %}
+            <option value="{{ opt }}" {% if selected_channel == opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="block">
+        Tone:
+        <select name="tone" class="input">
+          {% set tones = {'professional':'מקצועי','friendly':'ידידותי','sharp':'חד','humorous':'הומוריסטי','formal':'רשמי'} %}
+          {% for key, val in tones.items() %}
+            <option value="{{ key }}" {% if selected_tone == key %}selected{% endif %}>{{ val }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <button class="btn-secondary" type="submit">רענון רעיונות</button>
+      <a href="{{ url_for('campaign_content', campaign_id=campaign.id, channel=selected_channel, tone=selected_tone) }}" class="btn-secondary">← חזרה לתוכן</a>
+    </form>
+
+    {% if ideas and ideas|length > 0 %}
+      <div style="display:grid;gap:12px;">
+        {% for idea in ideas %}
+          <div class="card" style="padding:12px;border:1px solid #eee;">
+            <pre style="white-space:pre-wrap;word-wrap:break-word;margin:0 0 8px 0;">{{ idea }}</pre>
+            <form method="post" action="{{ url_for('campaign_ideas', campaign_id=campaign.id) }}" style="display:flex;gap:8px;align-items:center;">
+              <input type="hidden" name="channel" value="{{ selected_channel }}">
+              <input type="hidden" name="tone" value="{{ selected_tone or 'professional' }}">
+              <textarea name="chosen" rows="3" class="mono-input" style="flex:1;">{{ idea }}</textarea>
+              <button type="submit" class="btn-primary">השתמשי ברעיון</button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="notice notice-warning">
+        לא נמצאו רעיונות כרגע. נסי לרענן או לבחור ערוץ/טון אחרים.
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h1 class="page-title">הפעולה הזו דורשת שליחה (POST)</h1>
+    <p class="meta-line">נראה שהגעת לכתובת שמקבלת שליחה (POST) דרך קישור רגיל (GET).</p>
+    <div class="button-row">
+      <a href="{{ url_for('home') }}" class="btn-primary">← חזרה למסך הראשי</a>
+    </div>
+  </div>
+{% endblock %}

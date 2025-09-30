@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h1 class="page-title">עריכת קמפיין</h1>
+
+    {# הודעות פלאש #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for category, message in messages %}
+            <li class="flash {{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" class="form-edit grid-2">
+      <p class="form-note span-2">שדות חובה מסומנים <span class="req">*</span></p>
+
+      <label class="span-2">
+        שם קמפיין <span class="req">*</span>
+        <input
+          type="text"
+          name="name"
+          value="{{ c.name }}"
+          required
+          autocomplete="off"
+          autofocus
+          placeholder="לדוגמה: קמפיין פתיחת שנה"
+        >
+      </label>
+
+      <label class="span-2">
+        קהל יעד <span class="req">*</span>
+        <input
+          type="text"
+          name="audience"
+          value="{{ c.audience }}"
+          required
+          autocomplete="off"
+          placeholder="לדוגמה: אימהות לילדות 6–10, אזור חיפה"
+        >
+      </label>
+
+      <label>
+        ערוץ ברירת מחדל <span class="req">*</span>
+        <select name="channel" required>
+          {% for opt in channels %}
+            <option value="{{ opt }}" {% if c.channel == opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+        <small class="hint">משמש כברירת מחדל ליצירת תוכן.</small>
+      </label>
+
+      <label>
+        מטרה (Goal)
+        <input
+          type="text"
+          name="goal"
+          value="{{ c.goal }}"
+          autocomplete="off"
+          placeholder="לדוגמה: הרשמה לוובינר / הצטרפות לרשימת תפוצה"
+        >
+      </label>
+
+      <label>
+        תקציב (₪)
+        <input
+          type="number"
+          name="budget"
+          value="{{ c.budget }}"
+          min="0"
+          step="0.01"
+          inputmode="decimal"
+          placeholder="לדוגמה: 1500"
+        >
+      </label>
+
+      <div class="form-actions span-2">
+        <button type="submit" class="btn-primary">שמור</button>
+        <a href="{{ url_for('home') }}" class="btn-secondary">ביטול</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

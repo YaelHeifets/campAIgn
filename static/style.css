@@ -720,4 +720,14 @@ button[disabled], .btn-secondary[disabled], .btn-primary[disabled]{
 #content-actions .btn-secondary {
   border: 1px solid #ddd;  /* ודא שיש מסגרת */
 }
+/* ---- Logo hardening ---- */
+.app-header .logo-img{
+  height: 64px !important;
+  width: auto !important;
+  display: block !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
 

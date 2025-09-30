@@ -16,14 +16,19 @@
     <div class="container header-bar">
       <!-- לוגו – קליק מחזיר לדף הבית -->
       <a href="{{ url_for('home') }}" class="brand-logo-right" aria-label="דף הבית">
-        <img
-          src="{{ url_for('static', filename='images/campaignlogo.svg') }}"
-          class="logo-img"
-          alt="CampAIgn"
-          width="96" height="96"
-          decoding="async" loading="eager"
-        >
+        <picture>
+          <!-- קודם ננסה SVG בשם שיש לך עכשיו -->
+          <source srcset="{{ url_for('static', filename='images/campaignlogo.svg') }}?v=4" type="image/svg+xml">
+          <!-- נפילה ל-PNG בשם CampAIgnLogo.png (כמו שאמרת שקיים) -->
+          <img
+            src="{{ url_for('static', filename='images/CampAIgnLogo.png') }}?v=4"
+            alt="CampAIgn"
+            class="logo-img"
+            decoding="async" loading="eager"
+          >
+        </picture>
       </a>
+
 
       <!-- טקסט במרכז; LTR כדי שיהיה משמאל לימין -->
       <div class="brand-center" dir="ltr">
